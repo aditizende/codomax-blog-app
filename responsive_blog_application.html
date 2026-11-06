@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevWrite - Modern Tech & Design Blog</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eep2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar & smooth transitions */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="bg-gradient-to-tr from-indigo-600 to-sky-500 text-white p-2.5 rounded-xl shadow-md shadow-indigo-200 flex items-center justify-center">
+                        <i class="fa-solid fa-[#000000] fa-pen-nib text-lg text-white"></i>
+                    </div>
+                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-sky-600 bg-clip-text text-transparent">DevWrite</span>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                    <button onclick="navigateTo('home')" id="nav-home" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 text-indigo-600 bg-indigo-50">
+                        <i class="fa-solid fa-house mr-1.5 opacity-80"></i>Home
+                    </button>
+                    <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 transition-all duration-200">
+                        <i class="fa-solid fa-chart-line mr-1.5 opacity-80"></i>Dashboard
+                    </button>
+                    <button onclick="navigateTo('create')" id="nav-create" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-slate-50 transition-all duration-200">
+                        <i class="fa-solid fa-plus-circle mr-1.5 opacity-80"></i>Create Blog
+                    </button>
+                </nav>
+
+                <!-- Auth Action Buttons (Desktop) -->
+                <div class="hidden md:flex items-center space-x-3">
+                    <button onclick="navigateTo('login')" id="nav-login" class="nav-btn px-4 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 transition-colors">
+                        Sign In
+                    </button>
+                    <button onclick="navigateTo('register')" id="nav-register" class="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-all duration-200 transform active:scale-95">
+                        Get Started
+                    </button>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <div class="flex items-center md:hidden">
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-4 space-y-2 shadow-lg">
+            <button onclick="navigateTo('home'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-md text-base font-medium text-indigo-600 bg-indigo-50">
+                <i class="fa-solid fa-house mr-2"></i>Home
+            </button>
+            <button onclick="navigateTo('dashboard'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-md text-base font-medium text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-chart-line mr-2"></i>Dashboard
+            </button>
+            <button onclick="navigateTo('create'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-md text-base font-medium text-slate-700 hover:bg-slate-50">
+                <i class="fa-solid fa-plus-circle mr-2"></i>Create Blog
+            </button>
+            <div class="pt-3 border-t border-slate-100 flex flex-col space-y-2">
+                <button onclick="navigateTo('login'); toggleMobileMenu()" class="w-full py-2.5 rounded-lg text-center font-semibold text-slate-700 bg-slate-100">
+                    Sign In
+                </button>
+                <button onclick="navigateTo('register'); toggleMobileMenu()" class="w-full py-2.5 rounded-lg text-center font-semibold text-white bg-indigo-600">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 flex items-center p-4 max-w-xs text-slate-800 bg-white rounded-xl shadow-xl border border-slate-100 transform transition-all duration-300 translate-y-20 opacity-0">
+        <div id="toast-icon" class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-emerald-500 bg-emerald-100 rounded-lg">
+            <i class="fa-solid fa-check text-sm"></i>
+        </div>
+        <div id="toast-message" class="ml-3 text-sm font-medium">Action completed successfully!</div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINERS -->
+    <main class="flex-grow">
+
+        <!-- 1. HOME VIEW -->
+        <section id="view-home" class="view-section active">
+            <!-- Hero Section -->
+            <div class="relative overflow-hidden bg-gradient-to-b from-indigo-50/50 to-white py-12 sm:py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                    <span class="inline-flex items-center gap-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700 mb-4">
+                        <i class="fa-solid fa-sparkles"></i> Welcome to DevWrite Community
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight max-w-4xl mx-auto leading-tight">
+                        Insights, Stories, & Software <span class="bg-gradient-to-r from-indigo-600 to-sky-500 bg-clip-text text-transparent">Craftsmanship</span>
+                    </h1>
+                    <p class="mt-4 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+                        Discover insightful articles on modern web development, UI/UX design trends, state management, and full-stack architecture.
+                    </p>
+                    <div class="mt-8 flex justify-center gap-4">
+                        <button onclick="document.getElementById('search-filter-section').scrollIntoView({ behavior: 'smooth' })" class="px-6 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all transform active:scale-95">
+                            Explore Posts
+                        </button>
+                        <button onclick="navigateTo('create')" class="px-6 py-3 rounded-xl text-sm font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all transform active:scale-95 shadow-sm">
+                            Start Writing
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div id="search-filter-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-96">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <input type="text" id="search-input" onkeyup="filterPosts()" placeholder="Search title, author or keyword..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                    </div>
+
+                    <!-- Category Pills Filter -->
+                    <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none" id="category-pills">
+                        <button onclick="setCategory('All')" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm">All</button>
+                        <button onclick="setCategory('Frontend')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">Frontend</button>
+                        <button onclick="setCategory('Backend')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">Backend</button>
+                        <button onclick="setCategory('UI/UX')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">UI/UX</button>
+                        <button onclick="setCategory('DevOps')" class="cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all">DevOps</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blog Post Grid -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div id="posts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Cards will be populated dynamically via JavaScript -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="no-posts" class="hidden text-center py-16">
+                    <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fa-solid fa-folder-open"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-700">No blog posts found</h3>
+                    <p class="text-sm text-slate-500 mt-1">Try adjusting your search query or selected category filter.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. LOGIN VIEW -->
+        <section id="view-login" class="view-section">
+            <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+                <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+                    <div class="text-center mb-8">
+                        <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl inline-flex items-center justify-center mb-3 text-xl">
+                            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-slate-900">Welcome back</h2>
+                        <p class="text-sm text-slate-500 mt-1">Sign in to your DevWrite dashboard account</p>
+                    </div>
+                    <form onsubmit="handleAuthSubmit(event, 'Login')" class="space-y-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Email Address</label>
+                            <input type="email" required placeholder="alex@example.com" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Password</label>
+                                <a href="#" onclick="showToast('Password reset link sent!')" class="text-xs font-semibold text-indigo-600 hover:text-indigo-700">Forgot?</a>
+                            </div>
+                            <input type="password" required placeholder="••••••••" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                            <label for="remember" class="ml-2 text-sm text-slate-600">Remember me for 30 days</label>
+                        </div>
+                        <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all transform active:scale-98">
+                            Sign In
+                        </button>
+                    </form>
+                    <div class="mt-6 text-center text-sm text-slate-500">
+                        Don't have an account yet? 
+                        <button onclick="navigateTo('register')" class="font-bold text-indigo-600 hover:text-indigo-700 ml-1">Create one</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. REGISTER VIEW -->
+        <section id="view-register" class="view-section">
+            <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+                <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+                    <div class="text-center mb-8">
+                        <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-xl inline-flex items-center justify-center mb-3 text-xl">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-slate-900">Create Account</h2>
+                        <p class="text-sm text-slate-500 mt-1">Join thousands of software writers today</p>
+                    </div>
+                    <form onsubmit="handleAuthSubmit(event, 'Registration')" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Full Name</label>
+                            <input type="text" required placeholder="Alex Rivera" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Email Address</label>
+                            <input type="email" required placeholder="alex@example.com" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Password</label>
+                            <input type="password" required placeholder="••••••••" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Confirm Password</label>
+                            <input type="password" required placeholder="••••••••" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+                        <button type="submit" class="w-full py-3.5 mt-2 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all transform active:scale-98">
+                            Complete Registration
+                        </button>
+                    </form>
+                    <div class="mt-6 text-center text-sm text-slate-500">
+                        Already have an account? 
+                        <button onclick="navigateTo('login')" class="font-bold text-indigo-600 hover:text-indigo-700 ml-1">Sign In</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Dashboard Header -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-slate-900">Author Dashboard</h1>
+                        <p class="text-sm text-slate-500 mt-1">Manage your published blog posts, track analytics, and draft new content.</p>
+                    </div>
+                    <button onclick="navigateTo('create')" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all">
+                        <i class="fa-solid fa-plus mr-2"></i>Create New Post
+                    </button>
+                </div>
+
+                <!-- Stats Overview Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Total Articles</span>
+                            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-newspaper"></i>
+                            </div>
+                        </div>
+                        <div id="stat-total" class="text-3xl font-extrabold text-slate-900 mt-2">3</div>
+                        <span class="text-xs text-emerald-600 font-semibold flex items-center mt-2">
+                            <i class="fa-solid fa-arrow-trend-up mr-1"></i> +12% from last month
+                        </span>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Total Views</span>
+                            <div class="w-10 h-10 bg-sky-50 text-sky-600 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-eye"></i>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-extrabold text-slate-900 mt-2">14.2k</div>
+                        <span class="text-xs text-emerald-600 font-semibold flex items-center mt-2">
+                            <i class="fa-solid fa-arrow-trend-up mr-1"></i> +24% new visitors
+                        </span>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Total Likes</span>
+                            <div class="w-10 h-10 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-heart"></i>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-extrabold text-slate-900 mt-2">1,840</div>
+                        <span class="text-xs text-emerald-600 font-semibold flex items-center mt-2">
+                            <i class="fa-solid fa-arrow-trend-up mr-1"></i> +18% engagement
+                        </span>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Drafts</span>
+                            <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-file-pen"></i>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-extrabold text-slate-900 mt-2">2</div>
+                        <span class="text-xs text-slate-500 font-medium flex items-center mt-2">
+                            Pending review
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Articles Table Card -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                        <h2 class="font-bold text-slate-900">My Articles</h2>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">Synced with Live</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/70 border-b border-slate-100 text-xs font-bold uppercase text-slate-500 tracking-wider">
+                                    <th class="py-3.5 px-6">Article Details</th>
+                                    <th class="py-3.5 px-6">Category</th>
+                                    <th class="py-3.5 px-6">Published Date</th>
+                                    <th class="py-3.5 px-6">Status</th>
+                                    <th class="py-3.5 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-table-body" class="divide-y divide-slate-100 text-sm">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. CREATE BLOG VIEW -->
+        <section id="view-create" class="view-section">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="bg-white p-6 sm:p-10 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="border-b border-slate-100 pb-5 mb-6">
+                        <h1 class="text-2xl font-extrabold text-slate-900">Create New Article</h1>
+                        <p class="text-sm text-slate-500 mt-1">Publish your story, technical guide, or update to the developer audience.</p>
+                    </div>
+
+                    <form onsubmit="handleCreatePost(event)" class="space-y-6">
+                        <!-- Post Title -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Article Title *</label>
+                            <input type="text" id="post-title" required placeholder="e.g. Masterizing Modern Frontend Architecture with Tailwind & React" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+
+                        <!-- Grid row for Category & Read Time -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Category *</label>
+                                <select id="post-category" required class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                                    <option value="Frontend">Frontend Development</option>
+                                    <option value="Backend">Backend & APIs</option>
+                                    <option value="UI/UX">UI/UX Design</option>
+                                    <option value="DevOps">DevOps & Cloud</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Estimated Read Time</label>
+                                <input type="text" id="post-readtime" placeholder="e.g. 5 min read" value="4 min read" class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <!-- Featured Image URL -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Featured Image URL</label>
+                            <input type="url" id="post-image" placeholder="https://images.unsplash.com/photo-..." class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                            <span class="text-xs text-slate-400 mt-1 block">Leave empty to auto-generate a high-quality technology banner image.</span>
+                        </div>
+
+                        <!-- Summary/Excerpt -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Short Summary / Excerpt *</label>
+                            <input type="text" id="post-excerpt" required placeholder="A brief 1-2 sentence overview of what readers will learn..." class="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all">
+                        </div>
+
+                        <!-- Content Area -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Article Body Content *</label>
+                            <div class="border border-slate-200 rounded-xl overflow-hidden bg-slate-50 focus-within:ring-2 focus-within:ring-indigo-500">
+                                <!-- Formatting Toolbar Mock -->
+                                <div class="bg-slate-100 px-4 py-2 border-b border-slate-200 flex gap-3 text-slate-600 text-sm">
+                                    <button type="button" class="hover:text-indigo-600"><i class="fa-solid fa-bold"></i></button>
+                                    <button type="button" class="hover:text-indigo-600"><i class="fa-solid fa-italic"></i></button>
+                                    <button type="button" class="hover:text-indigo-600"><i class="fa-solid fa-link"></i></button>
+                                    <button type="button" class="hover:text-indigo-600"><i class="fa-solid fa-code"></i></button>
+                                    <button type="button" class="hover:text-indigo-600"><i class="fa-solid fa-list-ul"></i></button>
+                                </div>
+                                <textarea id="post-content" rows="8" required placeholder="Write your full story here... Markdown and HTML tags supported." class="w-full p-4 text-sm bg-transparent border-0 focus:outline-none resize-y"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                            <button type="button" onclick="navigateTo('home')" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-200 transition-all transform active:scale-95">
+                                <i class="fa-solid fa-paper-plane mr-2"></i>Publish Post
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BLOG DETAIL READ MODAL -->
+    <div id="read-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 transform transition-all">
+            <div class="relative">
+                <img id="modal-image" src="" alt="Post cover" class="w-full h-64 object-cover">
+                <button onclick="closeModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-900/60 text-white hover:bg-slate-900 flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 sm:p-8">
+                <div class="flex items-center gap-3 text-xs mb-3">
+                    <span id="modal-category" class="px-3 py-1 rounded-full font-bold bg-indigo-100 text-indigo-700">Category</span>
+                    <span id="modal-readtime" class="text-slate-500"><i class="fa-regular fa-clock mr-1"></i>5 min read</span>
+                </div>
+                <h2 id="modal-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3">Post Title</h2>
+                <div class="flex items-center gap-3 pb-6 border-b border-slate-100 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-indigo-500 text-white font-bold flex items-center justify-center text-sm" id="modal-avatar">
+                        AR
+                    </div>
+                    <div>
+                        <div id="modal-author" class="text-sm font-bold text-slate-800">Author Name</div>
+                        <div id="modal-date" class="text-xs text-slate-500">Published Date</div>
+                    </div>
+                </div>
+                <div id="modal-content" class="prose text-slate-600 leading-relaxed space-y-4 text-base">
+                    <!-- Post content renders here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <div class="bg-indigo-600 text-white p-1.5 rounded-lg text-xs font-bold">DV</div>
+                <span class="font-bold text-slate-800">DevWrite</span>
+                <span class="text-xs text-slate-400">© 2026 Codomax Digital Task. All rights reserved.</span>
+            </div>
+            <div class="flex space-x-6 text-slate-400 text-sm">
+                <a href="#" class="hover:text-indigo-600 transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-indigo-600 transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-indigo-600 transition-colors">Contact Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTIVE JAVASCRIPT LOGIC -->
+    <script>
+        // INITIAL BLOG STATE DATA
+        let posts = [
+            {
+                id: 1,
+                title: "Building Scalable Web Apps with Modern Tailwind CSS & Architecture",
+                category: "Frontend",
+                author: "Alex Rivera",
+                date: "Nov 02, 2026",
+                readTime: "5 min read",
+                image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80",
+                excerpt: "Explore best practices for designing utility-first responsive web applications with optimal component separation.",
+                content: "Modern web architecture requires a clean balance between utility-first CSS frameworks and structured component systems. In this article, we dive deep into how Tailwind CSS enables speed without sacrificing maintenance scalability. Utility classes allow rapid iteration directly in templates while maintaining low CSS payload sizes through purging unneeded rules during compilation."
+            },
+            {
+                id: 2,
+                title: "Designing Intuitive Dashboards & UX Workflows for SaaS Products",
+                category: "UI/UX",
+                author: "Sophia Lin",
+                date: "Oct 28, 2026",
+                readTime: "4 min read",
+                image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=800&q=80",
+                excerpt: "Learn visual hierarchy principles, layout balance, and responsive data tables for enterprise admin platforms.",
+                content: "A great user interface delivers powerful capabilities while maintaining simplicity. When crafting dashboards, visual hierarchy guides the user's attention to key analytics cards first before presenting complex data tables. Use clear contrast ratios, generous padding, and consistent design tokens throughout."
+            },
+            {
+                id: 3,
+                title: "Restful API Design Standards & Asynchronous Node.js Microservices",
+                category: "Backend",
+                author: "David Chen",
+                date: "Oct 15, 2026",
+                readTime: "7 min read",
+                image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
+                excerpt: "Key guidelines for structuring API endpoints, token authentication, error handling, and cloud data persistence.",
+                content: "Robust backend design is built on predictable REST endpoints, clear status codes, and resilient error handlers. Asynchronous processing in Node.js allows high concurrency when interacting with non-blocking database connectors."
+            }
+        ];
+
+        let selectedCategory = 'All';
+
+        // VIEW ROUTING CONTROLLER
+        function navigateTo(viewName) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+
+            // Show selected view section
+            const targetView = document.getElementById(`view-${viewName}`);
+            if (targetView) targetView.classList.add('active');
+
+            // Update Navigation state styling
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-indigo-600', 'bg-indigo-50', 'font-semibold');
+                btn.classList.add('text-slate-600', 'font-medium');
+            });
+
+            const activeNavBtn = document.getElementById(`nav-${viewName}`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.remove('text-slate-600', 'font-medium');
+                activeNavBtn.classList.add('text-indigo-600', 'bg-indigo-50', 'font-semibold');
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // MOBILE MENU TOGGLE
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // RENDER BLOG CARDS ON HOME VIEW
+        function renderPosts() {
+            const grid = document.getElementById('posts-grid');
+            const noPosts = document.getElementById('no-posts');
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+
+            grid.innerHTML = '';
+
+            const filteredPosts = posts.filter(post => {
+                const matchesCat = selectedCategory === 'All' || post.category === selectedCategory;
+                const matchesSearch = post.title.toLowerCase().includes(searchVal) ||
+                                      post.author.toLowerCase().includes(searchVal) ||
+                                      post.excerpt.toLowerCase().includes(searchVal);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filteredPosts.length === 0) {
+                noPosts.classList.remove('hidden');
+                return;
+            } else {
+                noPosts.classList.add('hidden');
+            }
+
+            filteredPosts.forEach(post => {
+                const card = document.createElement('article');
+                card.className = "bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group";
+                card.innerHTML = `
+                    <div class="relative overflow-hidden h-48 bg-slate-100">
+                        <img src="${post.image}" alt="${post.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80'">
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-indigo-600 shadow-sm">
+                            ${post.category}
+                        </span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-slate-400 font-medium mb-2 flex items-center justify-between">
+                                <span><i class="fa-regular fa-calendar mr-1"></i>${post.date}</span>
+                                <span><i class="fa-regular fa-clock mr-1"></i>${post.readTime}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 mb-2">
+                                ${post.title}
+                            </h3>
+                            <p class="text-xs sm:text-sm text-slate-600 line-clamp-3 leading-relaxed mb-4">
+                                ${post.excerpt}
+                            </p>
+                        </div>
+                        <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-sky-400 text-white font-bold flex items-center justify-center text-xs">
+                                    ${post.author.charAt(0)}
+                                </div>
+                                <span class="text-xs font-semibold text-slate-700">${post.author}</span>
+                            </div>
+                            <button onclick="openModal(${post.id})" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 inline-flex items-center">
+                                Read More <i class="fa-solid fa-arrow-right ml-1 transition-transform group-hover:translate-x-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // RENDER DASHBOARD TABLE & METRICS
+        function renderDashboard() {
+            const tbody = document.getElementById('dashboard-table-body');
+            const totalStat = document.getElementById('stat-total');
+            tbody.innerHTML = '';
+            
+            totalStat.innerText = posts.length;
+
+            posts.forEach(post => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-4 px-6 font-semibold text-slate-900">
+                        ${post.title}
+                    </td>
+                    <td class="py-4 px-6">
+                        <span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-600">${post.category}</span>
+                    </td>
+                    <td class="py-4 px-6 text-slate-500 text-xs">${post.date}</td>
+                    <td class="py-4 px-6">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                            Published
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <button onclick="editPost(${post.id})" class="p-1.5 text-slate-400 hover:text-indigo-600 transition-colors mr-1" title="Edit Post">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="deletePost(${post.id})" class="p-1.5 text-slate-400 hover:text-rose-600 transition-colors" title="Delete Post">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // SEARCH & CATEGORY FILTERING LOGIC
+        function filterPosts() {
+            renderPosts();
+        }
+
+        function setCategory(cat) {
+            selectedCategory = cat;
+            document.querySelectorAll('.cat-pill').forEach(btn => {
+                if (btn.innerText === cat) {
+                    btn.className = "cat-pill px-4 py-2 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm";
+                } else {
+                    btn.className = "cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all";
+                }
+            });
+            renderPosts();
+        }
+
+        // CREATE NEW BLOG POST
+        function handleCreatePost(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('post-title').value;
+            const category = document.getElementById('post-category').value;
+            const readTime = document.getElementById('post-readtime').value || "4 min read";
+            let image = document.getElementById('post-image').value;
+            const excerpt = document.getElementById('post-excerpt').value;
+            const content = document.getElementById('post-content').value;
+
+            if (!image) {
+                image = "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80";
+            }
+
+            const newPost = {
+                id: Date.now(),
+                title,
+                category,
+                author: "Alex Rivera",
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+                readTime,
+                image,
+                excerpt,
+                content
+            };
+
+            // Prepend new post
+            posts.unshift(newPost);
+            
+            // Re-render views
+            renderPosts();
+            renderDashboard();
+
+            // Clear Form
+            event.target.reset();
+
+            // Show Toast & Redirect
+            showToast("Blog post published successfully!");
+            navigateTo('home');
+        }
+
+        // DELETE POST FROM STATE
+        function deletePost(id) {
+            posts = posts.filter(p => p.id !== id);
+            renderPosts();
+            renderDashboard();
+            showToast("Article deleted successfully!");
+        }
+
+        function editPost(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                document.getElementById('post-title').value = post.title;
+                document.getElementById('post-category').value = post.category;
+                document.getElementById('post-readtime').value = post.readTime;
+                document.getElementById('post-image').value = post.image;
+                document.getElementById('post-excerpt').value = post.excerpt;
+                document.getElementById('post-content').value = post.content;
+                
+                // Remove original to simulate update
+                posts = posts.filter(p => p.id !== id);
+                navigateTo('create');
+                showToast("Post loaded for editing.");
+            }
+        }
+
+        // AUTH FORMS SUBMIT HANDLER
+        function handleAuthSubmit(event, type) {
+            event.preventDefault();
+            showToast(`${type} successful!`);
+            navigateTo('dashboard');
+        }
+
+        // READ POST MODAL LOGIC
+        function openModal(id) {
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+
+            document.getElementById('modal-title').innerText = post.title;
+            document.getElementById('modal-category').innerText = post.category;
+            document.getElementById('modal-readtime').innerHTML = `<i class="fa-regular fa-clock mr-1"></i>${post.readTime}`;
+            document.getElementById('modal-author').innerText = post.author;
+            document.getElementById('modal-avatar').innerText = post.author.split(' ').map(n=>n[0]).join('');
+            document.getElementById('modal-date').innerText = post.date;
+            document.getElementById('modal-image').src = post.image;
+            document.getElementById('modal-content').innerText = post.content;
+
+            document.getElementById('read-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('read-modal').classList.add('hidden');
+        }
+
+        // TOAST NOTIFICATION UTILITY
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // INITIALIZE APP ON LOAD
+        window.onload = function() {
+            renderPosts();
+            renderDashboard();
+        };
+    </script>
+</body>
+</html>
