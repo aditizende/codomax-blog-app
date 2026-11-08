@@ -74,6 +74,18 @@ app.get('/api/blogs', async (req, res) => {
   }
 });
 
+// 5. GET SINGLE BLOG BY ID API (Added for Module 3)
+app.get('/api/blogs/:id', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found!" });
+
+    res.status(200).json(blog);
+  } catch (err) {
+    res.status(500).json({ error: "Invalid Blog ID or server error" });
+  }
+});
+
 // Connect to MongoDB and start server
 mongoose.connect('mongodb://localhost:27017/codomax-blog')
   .then(() => {
