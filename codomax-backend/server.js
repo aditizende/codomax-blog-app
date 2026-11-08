@@ -13,6 +13,8 @@ app.use(cors());
 
 const JWT_SECRET = "my_super_secret_key_123";
 
+// ================= AUTH ROUTES =================
+
 // 1. REGISTER API
 app.post('/api/auth/register', async (req, res) => {
   try {
@@ -50,12 +52,19 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-// 3. CREATE BLOG API
+// ================= BLOG CRUD & SEARCH ROUTES =================
+
+// 1. CREATE BLOG (CREATE)
 app.post('/api/blogs', async (req, res) => {
   try {
-    const { title, content, authorName } = req.body;
+    const { title, content, category, authorName } = req.body;
 
-    const newBlog = new Blog({ title, content, authorName });
+    const newBlog = new Blog({ 
+      title, 
+      content, 
+      category: category || 'General', 
+      authorName 
+    });
     await newBlog.save();
 
     res.status(201).json({ message: "Blog created successfully!", blog: newBlog });
@@ -64,17 +73,31 @@ app.post('/api/blogs', async (req, res) => {
   }
 });
 
-// 4. GET ALL BLOGS API
+// 2. READ ALL BLOGS & SEARCH/FILTER (READ)
 app.get('/api/blogs', async (req, res) => {
   try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
+    const { search, category } = req.query;
+    let query = {};
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    if (category) {
+      query.category = category;
+    }
+
+    const blogs = await Blog.find(query).sort({ createdAt: -1 });
     res.status(200).json(blogs);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// 5. GET SINGLE BLOG BY ID API (Added for Module 3)
+// 3. READ SINGLE BLOG BY ID (READ)
 app.get('/api/blogs/:id', async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -83,6 +106,37 @@ app.get('/api/blogs/:id', async (req, res) => {
     res.status(200).json(blog);
   } catch (err) {
     res.status(500).json({ error: "Invalid Blog ID or server error" });
+  }
+});
+
+// 4. UPDATE BLOG BY ID (UPDATE)
+app.put('/api/blogs/:id', async (req, res) => {
+  try {
+    const { title, content, category } = req.body;
+
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { title, content, category },
+      { new: true }
+    );
+
+    if (!updatedBlog) return res.status(404).json({ message: "Blog not found!" });
+
+    res.status(200).json({ message: "Blog updated successfully!", blog: updatedBlog });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 5. DELETE BLOG BY ID (DELETE)
+app.delete('/api/blogs/:id', async (req, res) => {
+  try {
+    const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
+    if (!deletedBlog) return res.status(404).json({ message: "Blog not found!" });
+
+    res.status(200).json({ message: "Blog deleted successfully!" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
