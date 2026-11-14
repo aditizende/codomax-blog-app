@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codomax Blog App</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; background: #f9f9f9; color: #333; }
+        h1, h2 { color: #2c3e50; }
+        .card { background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        form { background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input, textarea { width: 100%; padding: 10px; margin: 8px 0 15px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #2980b9; }
+        .meta { font-size: 12px; color: #7f8c8d; }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Codomax Blog Platform</h1>
+    <p>Connected to Live Backend: <span id="api-status" style="color: green; font-weight: bold;">Loading...</span></p>
+
+    <!-- Create Blog Form -->
+    <form id="blogForm">
+        <h2>Create a New Blog Post</h2>
+        <label>Title:</label>
+        <input type="text" id="title" required placeholder="Enter blog title...">
+        
+        <label>Category:</label>
+        <input type="text" id="category" placeholder="e.g., Technology, Web Dev">
+
+        <label>Author:</label>
+        <input type="text" id="authorName" placeholder="Your name...">
+
+        <label>Content:</label>
+        <textarea id="content" rows="4" required placeholder="Write your blog content here..."></textarea>
+
+        <button type="submit">Publish Blog</button>
+    </form>
+
+    <!-- Display Blogs -->
+    <h2>All Blog Posts</h2>
+    <div id="blogsContainer">Loading posts from database...</div>
+
+    <script>
+        // Your live backend URL on Render
+        const API_URL = "https://codomax-blog-app-1.onrender.com/api/blogs";
+
+        // Check backend connection
+        fetch(API_URL)
+            .then(res => {
+                if(res.ok) document.getElementById('api-status').innerText = "Online & Connected!";
+                else document.getElementById('api-status').innerText = "Connected with errors";
+            })
+            .catch(() => document.getElementById('api-status').innerText = "Offline");
+
+        // Fetch and display all blogs
+        async function fetchBlogs() {
+            try {
+                const response = await fetch(API_URL);
+                const blogs = await response.json();
+                const container = document.getElementById('blogsContainer');
+                
+                if (blogs.length === 0) {
+                    container.innerHTML = "<p>No blog posts found yet. Create your first one above!</p>";
+                    return;
+                }
+
+                container.innerHTML = "";
+                blogs.forEach(blog => {
+                    container.innerHTML += `
+                        <div class="card">
+                            <h3>${blog.title}</h3>
+                            <p class="meta">Category: <b>${blog.category || 'General'}</b> | By ${blog.authorName || 'Anonymous'} on ${new Date(blog.createdAt).toLocaleDateString()}</p>
+                            <p>${blog.content}</p>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                document.getElementById('blogsContainer').innerHTML = "<p style='color: red;'>Failed to load blogs from server.</p>";
+            }
+        }
+
+        // Handle form submission to create a blog
+        document.getElementById('blogForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const category = document.getElementById('category').value;
+            const authorName = document.getElementById('authorName').value;
+            const content = document.getElementById('content').value;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, category, authorName, content })
+                });
+
+                if (response.ok) {
+                    alert('Blog published successfully!');
+                    document.getElementById('blogForm').reset();
+                    fetchBlogs(); // Refresh list
+                } else {
+                    alert('Failed to publish blog.');
+                }
+            } catch (err) {
+                alert('Error connecting to server.');
+            }
+        });
+
+        // Load blogs when page opens
+        fetchBlogs();
+    </script>
+</body>
+</html>
