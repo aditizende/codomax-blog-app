@@ -5,5 +5,14 @@
     "express": "^5.3.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.12.1"
-  }
+  },
+  "name": "codomax-backend",
+  "version": "1.0.0",
+  "description": "A secure full-stack blogging platform built with **Node.js, Express.js, MongoDB, and JWT Authentication**. Developed as part of the Codomax Digital Solutions Internship.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "type": "commonjs"
 }
